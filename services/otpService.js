@@ -1,6 +1,7 @@
 const otpConfig = require('../config/otpConfig');
 const { generateOtp } = require('../utils/otpUtils');
 const { getOtp, saveOtp } = require('../data/otpStore');
+const { sendOtpEmail } = require('./emailService');
 
 function createOtp(email) {
   const currentTime = Date.now();
@@ -37,6 +38,7 @@ function createOtp(email) {
     };
 
     saveOtp(email, resentOtpInformation);
+    sendOtpEmail(email, resentOtpInformation.otp);
 
     return resentOtpInformation;
   }
@@ -65,6 +67,7 @@ function createOtp(email) {
   };
 
   saveOtp(email, otpInformation);
+  sendOtpEmail(email, otpInformation.otp);
 
   return otpInformation;
 }
