@@ -1,7 +1,11 @@
 const { createOtp, verifyOtp } = require('../services/otpService');
 
 function sendOtp(request, response) {
-  const email = request.body?.email;
+  let email;
+
+  if (request.body) {
+    email = request.body.email;
+  }
 
   if (typeof email !== 'string' || email.trim() === '') {
     return response.status(400).json({
@@ -33,10 +37,21 @@ function sendOtp(request, response) {
 }
 
 function verifyOtpCode(request, response) {
-  const email = request.body?.email;
-  const otp = request.body?.otp;
+  let email;
+  let otp;
 
-  if (typeof email !== 'string' || email.trim() === '' || typeof otp !== 'string' || otp === '') {
+  if (request.body) {
+    email = request.body.email;
+    otp = request.body.otp;
+  }
+
+  if (typeof email !== 'string' || email.trim() === '') {
+    return response.status(400).json({
+      message: 'Email and OTP are required.'
+    });
+  }
+
+  if (typeof otp !== 'string' || otp === '') {
     return response.status(400).json({
       message: 'Email and OTP are required.'
     });

@@ -33,13 +33,25 @@ async function requestOtp() {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || 'The OTP request could not be sent.');
+      let errorMessage = 'The OTP request could not be sent.';
+
+      if (result.message) {
+        errorMessage = result.message;
+      }
+
+      throw new Error(errorMessage);
     }
 
     message.textContent = result.message;
     message.className = 'message';
   } catch (error) {
-    message.textContent = error.message || 'Unable to contact the OTP service.';
+    let errorMessage = 'Unable to contact the OTP service.';
+
+    if (error.message) {
+      errorMessage = error.message;
+    }
+
+    message.textContent = errorMessage;
     message.className = 'message error';
   } finally {
     sendButton.disabled = false;
@@ -57,6 +69,7 @@ if (form) {
 }
 
 async function verifyOtp() {
+  // Check the simple input format before asking the server to verify it.
   const email = emailInput.value.trim();
   const otp = otpInput.value.trim();
 
@@ -88,13 +101,25 @@ async function verifyOtp() {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || 'The OTP could not be verified.');
+      let errorMessage = 'The OTP could not be verified.';
+
+      if (result.message) {
+        errorMessage = result.message;
+      }
+
+      throw new Error(errorMessage);
     }
 
     message.textContent = result.message;
     message.className = 'message';
   } catch (error) {
-    message.textContent = error.message || 'Unable to contact the OTP service.';
+    let errorMessage = 'Unable to contact the OTP service.';
+
+    if (error.message) {
+      errorMessage = error.message;
+    }
+
+    message.textContent = errorMessage;
     message.className = 'message error';
   } finally {
     verifyButton.disabled = false;
