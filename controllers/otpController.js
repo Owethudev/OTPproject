@@ -1,4 +1,4 @@
-const { createOtp } = require('../services/otpService');
+const { createOtp, verifyOtp } = require('../services/otpService');
 
 function sendOtp(request, response) {
   const email = request.body?.email;
@@ -32,4 +32,33 @@ function sendOtp(request, response) {
   });
 }
 
-module.exports = { sendOtp };
+function verifyOtpCode(request, response) {
+  const email = request.body?.email;
+  const otp = request.body?.otp;
+
+  if (typeof email !== 'string' || email.trim() === '' || typeof otp !== 'string' || otp === '') {
+    return response.status(400).json({
+      message: 'Email and OTP are required.'
+    });
+  }
+
+  if (!/^\d{6}$/.test(otp)) {
+    return response.status(400).json({
+      message: 'OTP must be exactly 6 digits.'
+    });
+  }
+
+  const isVerified = verifyOtp(email.trim(), otp);
+
+  if (!isVerified) {
+    return response.status(400).json({
+      message: 'Invalid or expired OTP.'
+    });
+  }
+
+  return response.json({
+    message: 'OTP verified successfully.'
+  });
+}
+
+module.exports = { sendOtp, verifyOtpCode };

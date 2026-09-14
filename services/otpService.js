@@ -1,6 +1,6 @@
 const otpConfig = require('../config/otpConfig');
 const { generateOtp } = require('../utils/otpUtils');
-const { getOtp, saveOtp } = require('../data/otpStore');
+const { getOtp, saveOtp, updateOtp } = require('../data/otpStore');
 const { sendOtpEmail } = require('./emailService');
 
 function createOtp(email) {
@@ -72,4 +72,23 @@ function createOtp(email) {
   return otpInformation;
 }
 
-module.exports = { createOtp };
+function verifyOtp(email, suppliedOtp) {
+  const otpInformation = getOtp(email);
+
+  if (!otpInformation || otpInformation.used || Date.now() >= otpInformation.expiresAt) {
+    return false;
+  }
+
+  if (otpInformation.otp !== suppliedOtp) {
+    return false;
+  }
+
+  updateOtp(email, {
+    ...otpInformation,
+    used: true
+  });
+
+  return true;
+}
+
+module.exports = { createOtp, verifyOtp };
