@@ -3,8 +3,10 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 app.get('/', (request, response) => {
-  response.send('OTP verification system is running.');
+  response.json({ message: 'API is running.' });
 });
 
 app.listen(port, () => {
