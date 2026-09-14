@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Test System</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="otp-panel" aria-labelledby="page-title">
+      <p class="eyebrow">Development tool</p>
+      <h1 id="page-title">OTP Test System</h1>
+      <p class="intro">Request a one-time password for testing the OTP email flow.</p>
+
+      <form id="otp-form">
+        <label for="email">Email address</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="user@example.com"
+          required
+        >
+
+        <div class="button-row">
+          <button type="submit" id="send-button">Send OTP</button>
+          <button type="button" id="resend-button" class="secondary-button">Resend OTP</button>
+        </div>
+      </form>
+
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+</body>
+</html>
