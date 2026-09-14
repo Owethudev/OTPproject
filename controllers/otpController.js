@@ -9,7 +9,17 @@ function sendOtp(request, response) {
     });
   }
 
-  createOtp(email.trim());
+  try {
+    createOtp(email.trim());
+  } catch (error) {
+    if (error.code === 'OTP_RATE_LIMIT_EXCEEDED') {
+      return response.status(429).json({
+        message: 'Too many OTP requests. Please try again later.'
+      });
+    }
+
+    throw error;
+  }
 
   return response.json({
     message: 'OTP request accepted.'

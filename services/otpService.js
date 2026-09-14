@@ -4,8 +4,19 @@ const { getOtp, saveOtp } = require('../data/otpStore');
 
 function createOtp(email) {
   const createdAt = Date.now();
-  const expiresAt = createdAt + otpConfig.otpExpirySeconds * 1000;
   const existingOtpInformation = getOtp(email);
+  const requestWindowMilliseconds = 60 * 60 * 1000;
+  const requestWindowCutoff = createdAt - requestWindowMilliseconds;
+  const requestTimestamps = (existingOtpInformation?.requestTimestamps || [])
+    .filter((requestTimestamp) => requestTimestamp >= requestWindowCutoff);
+
+  if (requestTimestamps.length >= otpConfig.maxOtpRequestsPerHour) {
+    const error = new Error('OTP request limit exceeded.');
+    error.code = 'OTP_RATE_LIMIT_EXCEEDED';
+    throw error;
+  }
+
+  const expiresAt = createdAt + otpConfig.otpExpirySeconds * 1000;
   const historyPeriodMilliseconds = otpConfig.otpRecentHistoryHours * 60 * 60 * 1000;
   const historyCutoff = createdAt - historyPeriodMilliseconds;
   const otpHistory = (existingOtpInformation?.otpHistory || [])
@@ -22,6 +33,7 @@ function createOtp(email) {
     expiresAt,
     resendCount: 0,
     used: false,
+    requestTimestamps: [...requestTimestamps, createdAt],
     otpHistory: [...otpHistory, { otp, createdAt }]
   };
 
