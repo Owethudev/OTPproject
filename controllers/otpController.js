@@ -18,6 +18,12 @@ function sendOtp(request, response) {
       });
     }
 
+    if (error.code === 'OTP_RESEND_LIMIT_EXCEEDED') {
+      return response.status(429).json({
+        message: 'OTP resend limit reached. Please wait before requesting a new OTP.'
+      });
+    }
+
     throw error;
   }
 
